@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Agora Web Sample</title>
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <style>
+    body,
+    html {
+      width: 100%;
+      background-image: linear-gradient(150deg, #A0FE65 2%, #FA016D 100%);
+      background-repeat: no-repeat;
+      padding-bottom: 2%;
+    }
+
+    #inps {
+      margin-top: 100px;
+      position: relative;
+      z-index: 1000;
+    }
+
+    #inps p {
+      margin-bottom: 5%;
+      text-align: center;
+      color: darkslateblue;
+    }
+
+    input {
+      outline: none;
+      border: none;
+      border-radius: 5px;
+      padding-left: 10px;
+      background: linear-gradient(150deg, lightpink, lightblue);
+    }
+
+    button {
+      outline: none;
+      color: white!important;
+      background: linear-gradient(150deg, lightpink, lightblue);
+    }
+
+    .clear::after {
+      display: block;
+      clear: both;
+      content: '';
+    }
+
+    #div_join {
+      float: left;
+      width: 30%;
+      height: 100%;
+    }
+
+    #video {
+      position: relative;
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    #video img {
+      width: 80%;
+      position: relative;
+      z-index: 1;
+    }
+
+    #agora_local {
+      position: absolute;
+      z-index: 0;
+      width: 57%;
+      height: 61%;
+      top: 27%;
+      left: 16%;
+    }
+
+    #other {
+      float: right;
+      width: 70%;
+      height: 100%;
+    }
+
+    #font {
+      text-align: center;
+      color: white;
+      font-size: 45px;
+      line-height: 50px;
+      margin-top: 30px;
+    }
+
+    #other_vedio {
+      position: relative;
+      margin: auto;
+      width: 85%;
+      margin-top: 3%;
+    }
+
+    #other_vedio img {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media screen and (max-width:740px) {
+      body,
+      html {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        padding-bottom:0;
+      }
+      #div_join {
+        position: absolute;
+        float: none;
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+      #other_vedio {
+        height: 100%!important;
+        position: relative;
+        width: 100%;
+        margin-top: 0;
+      }
+      #other_vedio>div {
+        width: 100%!important;
+        height: 100%!important;
+        position: absolute;
+        z-index: 0;
+        top: 0!important;
+        left: 0!important;
+      }
+      #video {
+        position: absolute;
+        margin-top: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #other {
+        position: absolute;
+        float: none;
+        width: 100%;
+        height: 100%;
+      }
+      #font {
+        display: none;
+      }
+
+      #agora_local {
+        position: absolute;
+        z-index: 2;
+        height: 28%;
+        width: 35%;
+        top: 0;
+        left: auto;
+        right: 0!important;
+      }
+      img {
+        display: none;
+      }
+      #inps {
+        margin: 0;
+        position: absolute;
+        top: 20px;
+        left: 5%;
+      }
+      #inps p {
+        text-align: left;
+      }
+    }
+  </style>
+  <script src="AgoraRTCSDK-1.14.0.js"></script>
+  <script src="vendor/jquery.js"></script>
+</head>
+
+<body class="clear">
+  <div id="div_device" class="panel panel-default" style="display:none">
+    <div class="select">
+      <label for="audioSource">Audio source: </label><select id="audioSource"></select>
+    </div>
+    <div class="select">
+      <label for="videoSource">Video source: </label><select id="videoSource"></select>
+    </div>
+  </div>
+
+  <div id="div_join">
+    <div id="video">
+      <div id="agora_local"></div>
+      <img id="img1" src="assets/2.png" alt="">
+    </div>
+    <div id="inps">
+      <p id="p1" style="display:none;">Key: <input id="key" type="text" value="a61236817f16487e9fd798c1dc031db7"></input>
+      </p>
+      <p id="p2">Channel: <input id="channel" type="text" placeholder="请输入频道号" size="10"></input>
+      </p>
+      <p id="p3" style="display:none;">Host: <input id="isVideo" type="checkbox" checked></input>
+      </p>
+      <p id="p4"><button id="join" class="btn btn-primary" onclick="join()">Join</button></p>
+      <p id="p5"><button id="leave" class="btn btn-primary" onclick="leave()">Leave</button></p>
+      <p id="p6" style="display:none;"><button id="publish" class="btn btn-primary" onclick="publish()">Publish</button></p>
+      <p id="p7" style="display:none;"><button id="unpublish" class="btn btn-primary" onclick="unpublish()">Unpublish</button></p>
+    </div>
+  </div>
+  <div id="other">
+    <p id="other_vedio">
+      <img id="img2" src="assets/1.png" alt="">
+    </p>
+  </div>
+  <!--style>
+    .video__box{width:910px; margin:0 auto; overflow:hidden;}
+    .video__main{ width:810px; height:607px;float:left }
+    .video__list{ width:200px; height:607px; float:left;}
+    .video__item{ width:200px; height:174px; hei background:url(/img/icon_live.png) center center no-repeat; }
+    </style>
+    <div class="video__main">
+    </div>
+    <div class="video__list">
+        <div class="video__item"></div>
+        <div id="video" class="video__item">
+            <div id="agora_local"></div>
+        </div>
+    </div-->
+
+  <canvas style="display:none"></canvas>
+
+  
+</body>
+<script language="javascript" src="main.js"></script>
+</html>
